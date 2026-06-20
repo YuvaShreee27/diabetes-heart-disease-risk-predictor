@@ -1,4 +1,4 @@
-# diabetes-heart-disease-risk-predictor
+
 # Diabetes / Heart Disease Risk Predictor
 
 This project is used to predict whether a person is at risk of Diabetes or Heart Disease using Machine Learning algorithms.
