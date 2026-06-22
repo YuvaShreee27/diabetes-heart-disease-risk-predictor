@@ -1,0 +1,65 @@
+# performance_metrics.py
+
+# Import libraries
+import pandas as pd
+import joblib
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# -----------------------------
+# DIABETES DATASET
+# -----------------------------
+
+# Load cleaned dataset
+diabetes = pd.read_csv("diabetes_cleaned.csv")
+
+# Separate features and target
+X = diabetes.drop("Outcome", axis=1)
+y = diabetes["Outcome"]
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Load Logistic Regression model
+lr_model = joblib.load("diabetes_logistic_model.pkl")
+
+# Predict
+y_pred = lr_model.predict(X_test)
+
+print("===== Diabetes - Logistic Regression =====")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+
+# -----------------------------
+# HEART DISEASE DATASET
+# -----------------------------
+
+# Load cleaned dataset
+heart = pd.read_csv("heart_cleaned.csv")
+
+# Separate features and target
+X = heart.drop("target", axis=1)
+y = heart["target"]
+
+# Split the data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Load Logistic Regression model
+lr_model = joblib.load("heart_logistic_model.pkl")
+
+# Predict
+y_pred = lr_model.predict(X_test)
+
+print("\n===== Heart Disease - Logistic Regression =====")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
