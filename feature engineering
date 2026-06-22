@@ -1,0 +1,72 @@
+# feature_engineering.py
+
+# Import libraries
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+
+# -----------------------------
+# DIABETES DATASET
+# -----------------------------
+
+# Load the dataset
+diabetes = pd.read_csv("diabetes.csv")
+
+# Check for missing values
+print("Diabetes Missing Values:")
+print(diabetes.isnull().sum())
+
+# Remove duplicate rows
+diabetes = diabetes.drop_duplicates()
+
+# Separate features and target
+X_diabetes = diabetes.drop("Outcome", axis=1)
+y_diabetes = diabetes["Outcome"]
+
+# Scale the features
+scaler = StandardScaler()
+X_diabetes_scaled = scaler.fit_transform(X_diabetes)
+
+# Convert scaled data back to DataFrame
+X_diabetes_scaled = pd.DataFrame(X_diabetes_scaled, columns=X_diabetes.columns)
+
+# Add the target column
+diabetes_cleaned = X_diabetes_scaled
+diabetes_cleaned["Outcome"] = y_diabetes.values
+
+# Save cleaned dataset
+diabetes_cleaned.to_csv("diabetes_cleaned.csv", index=False)
+
+print("Diabetes dataset cleaned and saved successfully!")
+
+# -----------------------------
+# HEART DISEASE DATASET
+# -----------------------------
+
+# Load the dataset
+heart = pd.read_csv("heart.csv")
+
+# Check for missing values
+print("\nHeart Disease Missing Values:")
+print(heart.isnull().sum())
+
+# Remove duplicate rows
+heart = heart.drop_duplicates()
+
+# Separate features and target
+X_heart = heart.drop("target", axis=1)
+y_heart = heart["target"]
+
+# Scale the features
+X_heart_scaled = scaler.fit_transform(X_heart)
+
+# Convert scaled data back to DataFrame
+X_heart_scaled = pd.DataFrame(X_heart_scaled, columns=X_heart.columns)
+
+# Add the target column
+heart_cleaned = X_heart_scaled
+heart_cleaned["target"] = y_heart.values
+
+# Save cleaned dataset
+heart_cleaned.to_csv("heart_cleaned.csv", index=False)
+
+print("Heart disease dataset cleaned and saved successfully!")
