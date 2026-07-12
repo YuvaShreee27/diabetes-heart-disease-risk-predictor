@@ -1,0 +1,64 @@
+import pandas as pd
+import re
+import string
+
+# ==========================================
+# Load Dataset
+# ==========================================
+
+data = pd.read_csv("datasets/patient_notes.csv")
+
+print("Dataset Loaded Successfully!")
+print(data.head())
+
+# ==========================================
+# Text Cleaning Function
+# ==========================================
+
+def clean_text(text):
+
+    # Convert to lowercase
+    text = text.lower()
+
+    # Remove URLs
+    text = re.sub(r'http\S+', '', text)
+
+    # Remove numbers
+    text = re.sub(r'\d+', '', text)
+
+    # Remove punctuation
+    text = text.translate(str.maketrans('', '', string.punctuation))
+
+    # Remove extra spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    return text
+
+# ==========================================
+# Apply Cleaning
+# ==========================================
+
+data["clean_notes"] = data["patient_notes"].apply(clean_text)
+
+# ==========================================
+# Display Results
+# ==========================================
+
+print("\nOriginal Notes:\n")
+print(data["patient_notes"].head())
+
+print("\nCleaned Notes:\n")
+print(data["clean_notes"].head())
+
+# ==========================================
+# Save Cleaned Dataset
+# ==========================================
+
+data.to_csv(
+    "datasets/patient_notes_cleaned.csv",
+    index=False
+)
+
+print("\nCleaned dataset saved as:")
+print("datasets/patient_notes_cleaned.csv")
+print("\nText preprocessing completed successfully!")
