@@ -1,0 +1,182 @@
+import os
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+from datasets import Dataset
+
+from transformers import (
+    BertTokenizer,
+    BertForSequenceClassification,
+    Trainer,
+    TrainingArguments
+)
+
+# ==========================================
+# Create folders
+# ==========================================
+
+os.makedirs("models/bert_model", exist_ok=True)
+os.makedirs("results", exist_ok=True)
+
+# ==========================================
+# Load Dataset
+# ==========================================
+
+data = pd.read_csv("datasets/medical_text_dataset.csv")
+
+print("Dataset Loaded Successfully!")
+print(data.head())
+
+# ==========================================
+# Encode Labels
+# ==========================================
+
+label_encoder = LabelEncoder()
+
+data["label"] = label_encoder.fit_transform(data["diagnosis"])
+
+# Save label mapping
+label_mapping = pd.DataFrame({
+    "Diagnosis": label_encoder.classes_,
+    "Label": range(len(label_encoder.classes_))
+})
+
+label_mapping.to_csv(
+    "models/label_mapping.csv",
+    index=False
+)
+
+# ==========================================
+# Train-Test Split
+# ==========================================
+
+train_texts, test_texts, train_labels, test_labels = train_test_split(
+    data["patient_notes"],
+    data["label"],
+    test_size=0.2,
+    random_state=42
+)
+
+# ==========================================
+# Load Tokenizer
+# ==========================================
+
+tokenizer = BertTokenizer.from_pretrained(
+    "bert-base-uncased"
+)
+
+# ==========================================
+# Tokenization Function
+# ==========================================
+
+def tokenize(example):
+    return tokenizer(
+        example["text"],
+        padding="max_length",
+        truncation=True,
+        max_length=128
+    )
+
+# ==========================================
+# Create Hugging Face Dataset
+# ==========================================
+
+train_dataset = Dataset.from_dict({
+    "text": list(train_texts),
+    "label": list(train_labels)
+})
+
+test_dataset = Dataset.from_dict({
+    "text": list(test_texts),
+    "label": list(test_labels)
+})
+
+train_dataset = train_dataset.map(tokenize)
+test_dataset = test_dataset.map(tokenize)
+
+train_dataset.set_format(
+    type="torch",
+    columns=[
+        "input_ids",
+        "attention_mask",
+        "label"
+    ]
+)
+
+test_dataset.set_format(
+    type="torch",
+    columns=[
+        "input_ids",
+        "attention_mask",
+        "label"
+    ]
+)
+
+# ==========================================
+# Load BERT Model
+# ==========================================
+
+model = BertForSequenceClassification.from_pretrained(
+    "bert-base-uncased",
+    num_labels=len(label_encoder.classes_)
+)
+
+# ==========================================
+# Training Arguments
+# ==========================================
+
+training_args = TrainingArguments(
+    output_dir="results",
+    overwrite_output_dir=True,
+    num_train_epochs=3,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=8,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    logging_dir="logs",
+    logging_steps=10,
+    learning_rate=2e-5
+)
+
+# ==========================================
+# Trainer
+# ==========================================
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=test_dataset
+)
+
+# ==========================================
+# Train Model
+# ==========================================
+
+print("\nTraining BERT Model...\n")
+
+trainer.train()
+
+# ==========================================
+# Evaluate Model
+# ==========================================
+
+evaluation = trainer.evaluate()
+
+print("\nEvaluation Results")
+print(evaluation)
+
+# ==========================================
+# Save Model
+# ==========================================
+
+model.save_pretrained("models/bert_model")
+tokenizer.save_pretrained("models/bert_model")
+
+print("\nTransformer Model Saved Successfully!")
+
+print("\nFiles Created:")
+print("models/bert_model/")
+print("models/label_mapping.csv")
