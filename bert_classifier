@@ -1,0 +1,126 @@
+import pandas as pd
+import torch
+from transformers import (
+    BertTokenizer,
+    BertForSequenceClassification,
+    Trainer,
+    TrainingArguments
+)
+from datasets import Dataset
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+# ==========================================
+# Load Dataset
+# ==========================================
+
+data = pd.read_csv("datasets/patient_notes_cleaned.csv")
+
+# ==========================================
+# Encode Labels
+# ==========================================
+
+label_encoder = LabelEncoder()
+data["label"] = label_encoder.fit_transform(data["diagnosis"])
+
+# ==========================================
+# Train-Test Split
+# ==========================================
+
+train_texts, test_texts, train_labels, test_labels = train_test_split(
+    data["clean_notes"],
+    data["label"],
+    test_size=0.2,
+    random_state=42
+)
+
+# ==========================================
+# Load BERT Tokenizer
+# ==========================================
+
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+
+def tokenize(batch):
+    return tokenizer(
+        batch["text"],
+        padding="max_length",
+        truncation=True,
+        max_length=128
+    )
+
+# ==========================================
+# Create Hugging Face Dataset
+# ==========================================
+
+train_dataset = Dataset.from_dict({
+    "text": list(train_texts),
+    "label": list(train_labels)
+})
+
+test_dataset = Dataset.from_dict({
+    "text": list(test_texts),
+    "label": list(test_labels)
+})
+
+train_dataset = train_dataset.map(tokenize, batched=True)
+test_dataset = test_dataset.map(tokenize, batched=True)
+
+train_dataset.set_format(
+    type="torch",
+    columns=["input_ids", "attention_mask", "label"]
+)
+
+test_dataset.set_format(
+    type="torch",
+    columns=["input_ids", "attention_mask", "label"]
+)
+
+# ==========================================
+# Load BERT Model
+# ==========================================
+
+model = BertForSequenceClassification.from_pretrained(
+    "bert-base-uncased",
+    num_labels=2
+)
+
+# ==========================================
+# Training Configuration
+# ==========================================
+
+training_args = TrainingArguments(
+    output_dir="results",
+    num_train_epochs=3,
+    per_device_train_batch_size=8,
+    per_device_eval_batch_size=8,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    logging_dir="logs",
+    logging_steps=10
+)
+
+# ==========================================
+# Trainer
+# ==========================================
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=test_dataset
+)
+
+# ==========================================
+# Train Model
+# ==========================================
+
+trainer.train()
+
+# ==========================================
+# Save Model
+# ==========================================
+
+model.save_pretrained("models/bert_model")
+tokenizer.save_pretrained("models/bert_model")
+
+print("\nBERT model trained and saved successfully!")
