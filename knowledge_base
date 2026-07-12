@@ -1,0 +1,86 @@
+import os
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# ==========================================
+# Knowledge Base File
+# ==========================================
+
+KNOWLEDGE_BASE = "datasets/medical_knowledge_base.txt"
+
+# ==========================================
+# Load Knowledge Base
+# ==========================================
+
+def load_knowledge_base():
+
+    if not os.path.exists(KNOWLEDGE_BASE):
+        raise FileNotFoundError(
+            "medical_knowledge_base.txt not found!"
+        )
+
+    with open(
+        KNOWLEDGE_BASE,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        text = file.read()
+
+    documents = [
+        document.strip()
+        for document in text.split("\n\n")
+        if document.strip()
+    ]
+
+    return documents
+
+# ==========================================
+# Create Vector Database
+# ==========================================
+
+def create_vector_database(documents):
+
+    vectorizer = TfidfVectorizer()
+
+    vectors = vectorizer.fit_transform(documents)
+
+    return vectorizer, vectors
+
+# ==========================================
+# Retrieve Relevant Document
+# ==========================================
+
+def retrieve_document(query):
+
+    documents = load_knowledge_base()
+
+    vectorizer, vectors = create_vector_database(documents)
+
+    query_vector = vectorizer.transform([query])
+
+    similarity = cosine_similarity(
+        query_vector,
+        vectors
+    )
+
+    best_match = similarity.argmax()
+
+    return documents[best_match]
+
+# ==========================================
+# Test
+# ==========================================
+
+if __name__ == "__main__":
+
+    print("Medical Knowledge Base Loaded Successfully!\n")
+
+    question = input("Enter Medical Query:\n")
+
+    result = retrieve_document(question)
+
+    print("\nMost Relevant Medical Information:\n")
+
+    print(result)
