@@ -1,0 +1,96 @@
+import pandas as pd
+import joblib
+import os
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# Create models directory if it doesn't exist
+os.makedirs("models", exist_ok=True)
+
+# ==========================================================
+# HYBRID MODEL FOR DIABETES
+# ==========================================================
+
+diabetes = pd.read_csv("datasets/diabetes_cleaned.csv")
+
+X = diabetes.drop("Outcome", axis=1)
+y = diabetes["Outcome"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# Base Models
+lr = LogisticRegression(max_iter=1000)
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+svm = SVC(probability=True)
+
+# Hybrid Voting Classifier
+hybrid_diabetes = VotingClassifier(
+    estimators=[
+        ('lr', lr),
+        ('rf', rf),
+        ('svm', svm)
+    ],
+    voting='soft'
+)
+
+hybrid_diabetes.fit(X_train, y_train)
+
+prediction = hybrid_diabetes.predict(X_test)
+
+accuracy = accuracy_score(y_test, prediction)
+
+print("===================================")
+print("Hybrid Diabetes Model Accuracy")
+print(f"Accuracy : {accuracy:.2f}")
+print("===================================")
+
+joblib.dump(hybrid_diabetes,
+            "models/hybrid_diabetes_model.pkl")
+
+# ==========================================================
+# HYBRID MODEL FOR HEART DISEASE
+# ==========================================================
+
+heart = pd.read_csv("datasets/heart_cleaned.csv")
+
+X = heart.drop("target", axis=1)
+y = heart["target"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+lr = LogisticRegression(max_iter=1000)
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+svm = SVC(probability=True)
+
+hybrid_heart = VotingClassifier(
+    estimators=[
+        ('lr', lr),
+        ('rf', rf),
+        ('svm', svm)
+    ],
+    voting='soft'
+)
+
+hybrid_heart.fit(X_train, y_train)
+
+prediction = hybrid_heart.predict(X_test)
+
+accuracy = accuracy_score(y_test, prediction)
+
+print("===================================")
+print("Hybrid Heart Disease Model Accuracy")
+print(f"Accuracy : {accuracy:.2f}")
+print("===================================")
+
+joblib.dump(hybrid_heart,
+            "models/hybrid_heart_model.pkl")
+
+print("\nHybrid Models Saved Successfully!")
