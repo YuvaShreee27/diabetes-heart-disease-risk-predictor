@@ -1,0 +1,115 @@
+import os
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# ==========================================
+# Knowledge Base File
+# ==========================================
+
+KNOWLEDGE_BASE = "datasets/medical_knowledge_base.txt"
+
+# ==========================================
+# Load Documents
+# ==========================================
+
+def load_documents():
+
+    if not os.path.exists(KNOWLEDGE_BASE):
+        raise FileNotFoundError(
+            "Knowledge base not found!"
+        )
+
+    with open(
+        KNOWLEDGE_BASE,
+        "r",
+        encoding="utf-8"
+    ) as file:
+
+        text = file.read()
+
+    documents = [
+        doc.strip()
+        for doc in text.split("\n\n")
+        if doc.strip()
+    ]
+
+    return documents
+
+# ==========================================
+# Retrieve Most Relevant Document
+# ==========================================
+
+def retrieve_documents(query):
+
+    documents = load_documents()
+
+    vectorizer = TfidfVectorizer(stop_words="english")
+
+    document_vectors = vectorizer.fit_transform(documents)
+
+    query_vector = vectorizer.transform([query])
+
+    similarity_scores = cosine_similarity(
+        query_vector,
+        document_vectors
+    )
+
+    best_match = similarity_scores.argmax()
+
+    return documents[best_match]
+
+# ==========================================
+# Retrieve Top-K Documents
+# ==========================================
+
+def retrieve_top_k(query, k=3):
+
+    documents = load_documents()
+
+    vectorizer = TfidfVectorizer(stop_words="english")
+
+    document_vectors = vectorizer.fit_transform(documents)
+
+    query_vector = vectorizer.transform([query])
+
+    similarity_scores = cosine_similarity(
+        query_vector,
+        document_vectors
+    )[0]
+
+    top_indices = similarity_scores.argsort()[-k:][::-1]
+
+    top_documents = []
+
+    for index in top_indices:
+
+        top_documents.append({
+            "document": documents[index],
+            "score": round(similarity_scores[index], 4)
+        })
+
+    return top_documents
+
+# ==========================================
+# Example
+# ==========================================
+
+if __name__ == "__main__":
+
+    query = input("Enter Patient Symptoms:\n\n")
+
+    print("\nMost Relevant Document:\n")
+
+    print(retrieve_documents(query))
+
+    print("\nTop 3 Relevant Documents:\n")
+
+    results = retrieve_top_k(query)
+
+    for i, result in enumerate(results, start=1):
+
+        print(f"\nDocument {i}")
+        print("---------------------------")
+        print(result["document"])
+        print(f"Similarity Score : {result['score']}")
