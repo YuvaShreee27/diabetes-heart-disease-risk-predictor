@@ -1,0 +1,74 @@
+import torch
+import pandas as pd
+
+from transformers import BertTokenizer, BertForSequenceClassification
+
+# ==========================================
+# Load Trained Model
+# ==========================================
+
+MODEL_PATH = "models/bert_model"
+
+tokenizer = BertTokenizer.from_pretrained(MODEL_PATH)
+
+model = BertForSequenceClassification.from_pretrained(MODEL_PATH)
+
+model.eval()
+
+# ==========================================
+# Load Label Mapping
+# ==========================================
+
+label_map = pd.read_csv("models/label_mapping.csv")
+
+labels = label_map["Diagnosis"].tolist()
+
+# ==========================================
+# Prediction Function
+# ==========================================
+
+def predict(text):
+
+    encoding = tokenizer(
+        text,
+        padding=True,
+        truncation=True,
+        max_length=128,
+        return_tensors="pt"
+    )
+
+    with torch.no_grad():
+
+        outputs = model(**encoding)
+
+        prediction = torch.argmax(
+            outputs.logits,
+            dim=1
+        ).item()
+
+    return labels[prediction]
+
+# ==========================================
+# User Input
+# ==========================================
+
+print("=========================================")
+print(" Medical Text Disease Prediction System")
+print("=========================================\n")
+
+patient_note = input("Enter Patient Notes:\n\n")
+
+result = predict(patient_note)
+
+print("\n=========================================")
+print("Prediction Result")
+print("=========================================")
+
+print("Patient Notes:")
+print(patient_note)
+
+print("\nPredicted Disease:")
+
+print(result)
+
+print("\nPrediction Completed Successfully!")
