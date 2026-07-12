@@ -1,0 +1,68 @@
+import pandas as pd
+import joblib
+import os
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+
+os.makedirs("models", exist_ok=True)
+
+# -----------------------------
+# Diabetes Dataset
+# -----------------------------
+diabetes = pd.read_csv("datasets/diabetes_cleaned.csv")
+
+X_diabetes = diabetes.drop("Outcome", axis=1)
+y_diabetes = diabetes["Outcome"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_diabetes, y_diabetes, test_size=0.2, random_state=42
+)
+
+# Logistic Regression
+lr = LogisticRegression(max_iter=1000)
+lr.fit(X_train, y_train)
+joblib.dump(lr, "models/logistic_regression_diabetes.pkl")
+
+# Random Forest
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+joblib.dump(rf, "models/random_forest_diabetes.pkl")
+
+# SVM
+svm = SVC(probability=True)
+svm.fit(X_train, y_train)
+joblib.dump(svm, "models/svm_diabetes.pkl")
+
+print("Diabetes models trained successfully!")
+
+# -----------------------------
+# Heart Disease Dataset
+# -----------------------------
+heart = pd.read_csv("datasets/heart_cleaned.csv")
+
+X_heart = heart.drop("target", axis=1)
+y_heart = heart["target"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_heart, y_heart, test_size=0.2, random_state=42
+)
+
+# Logistic Regression
+lr = LogisticRegression(max_iter=1000)
+lr.fit(X_train, y_train)
+joblib.dump(lr, "models/logistic_regression_heart.pkl")
+
+# Random Forest
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+joblib.dump(rf, "models/random_forest_heart.pkl")
+
+# SVM
+svm = SVC(probability=True)
+svm.fit(X_train, y_train)
+joblib.dump(svm, "models/svm_heart.pkl")
+
+print("Heart Disease models trained successfully!")
