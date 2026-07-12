@@ -115,3 +115,98 @@ README.md
 
 ## Conclusion
 The Week 2 tasks were completed successfully. The datasets were cleaned, machine learning models were trained, and their performance was evaluated. This improved the overall Diabetes and Heart Disease Risk Predictor project.
+
+# Week 3 – Hybrid Disease Risk Prediction Model
+
+## Project Title
+
+**Diabetes & Heart Disease Risk Predictor**
+
+## Objective
+
+The objective of Week 3 was to improve the prediction performance of the existing machine learning models by developing a **Hybrid Model**. A Voting Classifier was implemented by combining **Logistic Regression** and **Random Forest** algorithms to achieve more reliable and accurate disease risk prediction.
+
+---
+
+## Work Completed
+
+* Used the cleaned diabetes and heart disease datasets from Week 2.
+* Developed a Hybrid Machine Learning Model using a Voting Classifier.
+* Combined Logistic Regression and Random Forest classifiers.
+* Trained separate hybrid models for diabetes and heart disease prediction.
+* Evaluated model performance using standard classification metrics.
+* Saved the trained models for future deployment.
+
+---
+
+## Technologies Used
+
+* Python
+* Pandas
+* NumPy
+* Scikit-learn
+* Matplotlib
+* Joblib
+
+---
+
+## Project Structure
+
+```text
+Week-3/
+│
+├── datasets/
+│   ├── diabetes_cleaned.csv
+│   └── heart_cleaned.csv
+│
+├── notebooks/
+│   └── hybrid_model.ipynb
+│
+├── models/
+│   ├── hybrid_diabetes_model.pkl
+│   └── hybrid_heart_model.pkl
+│
+├── src/
+│   ├── hybrid_model.py
+│   ├── train_hybrid.py
+│   └── evaluate_model.py
+│
+├── results/
+│   ├── accuracy_graph.png
+│   ├── confusion_matrix.png
+│   └── roc_curve.png
+│
+├── README.md
+└── Week3_Report.pdf
+```
+
+---
+
+## Model Performance (Sample)
+
+| Model               | Accuracy |
+| ------------------- | -------- |
+| Logistic Regression | 84%      |
+| Random Forest       | 89%      |
+| **Hybrid Model**    | **91%**  |
+
+*Note: The above values are sample results for demonstration purposes.*
+
+---
+
+## Learning Outcomes
+
+* Understood the concept of ensemble learning.
+* Learned how a Voting Classifier combines multiple models to improve prediction performance.
+* Gained experience in training, evaluating, and saving hybrid machine learning models.
+* Improved knowledge of model comparison using performance metrics.
+
+---
+
+## Future Work
+
+* Integrate Transformer-based models for processing clinical or patient text data.
+* Build an explainable AI module for disease prediction.
+* Deploy the hybrid prediction model as a web application.
+* Enhance the system with additional healthcare datasets for improved accuracy.
+
