@@ -1,0 +1,31 @@
+patient_id,patient_notes,diagnosis
+1,"Patient reports frequent urination, excessive thirst, and unexplained weight loss.",Diabetes
+2,"Patient experiences chest pain during physical activity and shortness of breath.",Heart Disease
+3,"Complains of constant fatigue, blurred vision, and increased hunger.",Diabetes
+4,"Reports dizziness, irregular heartbeat, and chest discomfort.",Heart Disease
+5,"Patient has high blood sugar levels with increased thirst and frequent urination.",Diabetes
+6,"Experiences severe chest pain radiating to the left arm with sweating.",Heart Disease
+7,"Complains of numbness in the feet, fatigue, and slow wound healing.",Diabetes
+8,"Reports palpitations, high blood pressure, and difficulty breathing.",Heart Disease
+9,"Patient has elevated glucose levels and excessive hunger.",Diabetes
+10,"Complains of chest tightness after climbing stairs.",Heart Disease
+11,"Patient experiences frequent urination during the night and blurred vision.",Diabetes
+12,"Reports pain in the chest accompanied by nausea and sweating.",Heart Disease
+13,"Patient complains of dry mouth and excessive thirst.",Diabetes
+14,"Experiences pressure in the chest while walking long distances.",Heart Disease
+15,"Patient reports unexplained weight loss and constant tiredness.",Diabetes
+16,"Complains of pain spreading to the jaw and left shoulder.",Heart Disease
+17,"Patient has elevated blood glucose levels and slow healing cuts.",Diabetes
+18,"Experiences shortness of breath even while resting.",Heart Disease
+19,"Patient reports increased appetite, frequent urination, and fatigue.",Diabetes
+20,"Complains of chest pain with irregular heartbeat and dizziness.",Heart Disease
+21,"Patient has tingling sensation in feet with increased thirst.",Diabetes
+22,"Reports severe chest discomfort after exercise.",Heart Disease
+23,"Patient experiences fatigue and blurred vision after meals.",Diabetes
+24,"Complains of rapid heartbeat and chest pressure.",Heart Disease
+25,"Patient reports frequent infections and slow wound healing.",Diabetes
+26,"Experiences pain in the chest radiating to the back.",Heart Disease
+27,"Patient complains of excessive thirst and frequent urination.",Diabetes
+28,"Reports chest pain associated with shortness of breath.",Heart Disease
+29,"Patient has elevated HbA1c levels and excessive hunger.",Diabetes
+30,"Complains of chest discomfort with sweating and nausea.",Heart Disease
